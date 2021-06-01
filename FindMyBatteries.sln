@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.810.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindMyBatteries", "FindMyBatteries\FindMyBatteries.csproj", "{AB7569D6-A51C-4BA5-8FE9-375DC158CEA3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|anycpu = Debug|anycpu
+		Release|anycpu = Release|anycpu
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB7569D6-A51C-4BA5-8FE9-375DC158CEA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB7569D6-A51C-4BA5-8FE9-375DC158CEA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB7569D6-A51C-4BA5-8FE9-375DC158CEA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB7569D6-A51C-4BA5-8FE9-375DC158CEA3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A10B25BF-C6A0-437E-8447-0E0A074DEC74}
+	EndGlobalSection
+EndGlobal
