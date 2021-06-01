@@ -92,6 +92,10 @@ namespace FindMyBatteries.ICloud
                 var response = await loginResult.Content.ReadAsStringAsync();
 
                 // (contains lots of account info as JSON)
+
+                // TODO:
+                // * read the Set-Cookie header
+                // * put some of the JSON in an object. dsInfo.dsid and webservices.findme.url, especially.
             }
         }
     }
