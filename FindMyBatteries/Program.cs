@@ -1,10 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Linq;
 
 namespace FindMyBatteries
 {
@@ -20,6 +16,8 @@ namespace FindMyBatteries
             var iCloudAuth = new ICloud.ICloudAuth();
             await iCloudAuth.InitSessionTokenAsync(user, pw);
             await iCloudAuth.AccountLoginAsync();
+
+            await new FindMe.FindMe().InitClientAsync(iCloudAuth);
 
             Console.WriteLine("Hello World!");
         }

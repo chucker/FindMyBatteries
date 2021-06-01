@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -9,14 +10,17 @@ namespace FindMyBatteries.ICloud
 {
     public class ICloudAuth
     {
-        public string? SessionToken { get; set; }
-        public string? SessionId { get; set; }
-        public string? Scnt { get; set; }
+        public string? SessionToken { get; private set; }
+        public string? SessionId { get; private set; }
+        public string? Scnt { get; private set; }
 
-        public string? AuthType { get; set; }
+        public string? AuthType { get; private set; }
         public bool TfaRequired => AuthType == "hsa2";
 
         public Guid ClientId { get; } = Guid.NewGuid();
+
+        public List<string>? LoginResultCookies { get; private set; }
+        public LoginResult? AccountInfo { get; private set; }
 
         private record AuthTokenResponse(string AuthType);
 
@@ -39,7 +43,7 @@ namespace FindMyBatteries.ICloud
                     F = ""
                 }));
 
-                var loginResult = await httpClient.PostAsJsonAsync("https://idmsa.apple.com/appleauth/auth/signin", new
+                var response = await httpClient.PostAsJsonAsync("https://idmsa.apple.com/appleauth/auth/signin", new
                 {
                     accountName = username,
                     password = password,
@@ -47,28 +51,28 @@ namespace FindMyBatteries.ICloud
                     trustTokens = Array.Empty<object>()
                 });
 
-                if (loginResult.Headers.TryGetValues("x-apple-session-token", out var sessionToken))
+                if (response.Headers.TryGetValues("x-apple-session-token", out var sessionToken))
                 {
                     SessionToken = sessionToken.First();
                 }
 
-                if (loginResult.Headers.TryGetValues("x-apple-id-session-id", out var sessionId))
+                if (response.Headers.TryGetValues("x-apple-id-session-id", out var sessionId))
                 {
                     SessionId = sessionId.First();
                 }
 
-                if (loginResult.Headers.TryGetValues("scnt", out var scnt))
+                if (response.Headers.TryGetValues("scnt", out var scnt))
                 {
                     Scnt = scnt.First();
                 }
 
-                var response = await loginResult.Content.ReadFromJsonAsync<AuthTokenResponse>();
+                var responseContent = await response.Content.ReadFromJsonAsync<AuthTokenResponse>();
 
-                AuthType = response!.AuthType;
+                AuthType = responseContent!.AuthType;
             }
         }
 
-        public async Task AccountLoginAsync(string trustToken = null)
+        public async Task AccountLoginAsync(string? trustToken = null)
         {
             using (var httpClient = new HttpClient())
             {
@@ -82,20 +86,21 @@ namespace FindMyBatteries.ICloud
                                     $"clientID={ClientId}&" +
                                     "clientMasteringNumber=2018B29";
 
-                var loginResult = await httpClient.PostAsJsonAsync(requestUri, new
+                var response = await httpClient.PostAsJsonAsync(requestUri, new
                 {
                     dsWebAuthToken = this.SessionToken,
                     extended_login = true,
                     trustToken = trustToken
                 });
 
-                var response = await loginResult.Content.ReadAsStringAsync();
+                LoginResultCookies = response.Headers.GetValues("Set-Cookie").ToList();
+
+                AccountInfo = await response.Content.ReadFromJsonAsync<LoginResult>();
 
                 // (contains lots of account info as JSON)
 
                 // TODO:
                 // * read the Set-Cookie header
-                // * put some of the JSON in an object. dsInfo.dsid and webservices.findme.url, especially.
             }
         }
     }
