@@ -3,7 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.810.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindMyBatteries", "FindMyBatteries\FindMyBatteries.csproj", "{AB7569D6-A51C-4BA5-8FE9-375DC158CEA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindMyBatteries.CLI", "FindMyBatteries.CLI\FindMyBatteries.CLI.csproj", "{AB7569D6-A51C-4BA5-8FE9-375DC158CEA3}"
+EndProject
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
