@@ -46,7 +46,9 @@ namespace FindMyBatteries.FindMe
 
                 var response = await httpClient.PostAsJsonAsync(requestUri, requestBody);
 
-                var responseString = await response.Content.ReadAsStringAsync();
+                //var responseString = await response.Content.ReadAsStringAsync();
+
+                var responseDTO = await response.Content.ReadFromJsonAsync<DTOs.FindMeResponse>();
             }
         }
     }
