@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AppKit;
@@ -18,6 +19,13 @@ namespace FindMyBatteries.macOS
 
         public override void DidFinishLaunching(NSNotification notification)
         {
+            //var rnd = new Random();
+            //while (true)
+            //{
+            //    var nextDouble = rnd.Next(0, 1_000) / (double)1_000;
+            //    Console.WriteLine(DrawPercentageAsUnicodeBlock(nextDouble));
+            //}
+
             new System.Threading.Timer(async _ =>
             {
                 var findMeResponse = await GetFindMeDataAsync();
@@ -58,6 +66,25 @@ namespace FindMyBatteries.macOS
             // Insert code here to tear down your application
         }
 
+        public static string DrawPercentageAsUnicodeBlock(double percentageAsDecimal)
+        {
+            var sb = new StringBuilder(25);
+
+            int[] chars = new[] { 0x258F, 0x258E, 0x258D, 0x258C, 0x258B, 0x258A, 0x2589, 0x2588 };
+
+            int remaining = (int)Math.Ceiling(percentageAsDecimal * 100);
+            int current;
+            while (remaining > 0)
+            {
+                current = remaining > 8 ? 8 : remaining;
+                remaining -= 8;
+
+                sb.Append(char.ConvertFromUtf32(chars[current - 1]));
+            }
+
+            return sb.ToString();
+        }
+
         private void CreateStatusBarItem(FindMe.DTOs.FindMeResponse findMeResponse)
         {
             NSStatusBar statusBar = NSStatusBar.SystemStatusBar;
@@ -85,8 +112,18 @@ namespace FindMyBatteries.macOS
 
                 string suffix = item.BatteryStatus == "Charging" ? " (charging)" : "";
 
-                menuItem = new NSMenuItem($"    {item.BatteryLevel:P0}{suffix}");
-                _StatusItem.Menu.AddItem(menuItem);
+                if (item.BatteryLevel != null)
+                {
+                    string unicodeBlockPercentage = $"    { DrawPercentageAsUnicodeBlock(item.BatteryLevel.Value)}";
+                    menuItem = new NSMenuItem//(unicodeBlockPercentage)
+                    {
+                        AttributedTitle = new NSAttributedString(unicodeBlockPercentage, font: NSFont.FromFontName("SF Pro Display", 10))
+                    };
+                    _StatusItem.Menu.AddItem(menuItem);
+
+                    menuItem = new NSMenuItem($"    {item.BatteryLevel:P0}{suffix}");
+                    _StatusItem.Menu.AddItem(menuItem);
+                }
             }
 
             //            if (iCloudAuth.TfaRequired)
