@@ -98,6 +98,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Reference Include="Xamarin.Mac" />
+	  <Reference Include="System.Core" />
+	  <Reference Include="System" />
+	  <Reference Include="System.ComponentModel.DataAnnotations" />
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>
