@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -13,9 +14,9 @@ namespace FindMyBatteries.ICloud
         private const string WidgetKey = "83545bf919730e51dbfba24e7e8a78d2";
         private const string Locale = "en_US";
 
-        public string? SessionToken { get; private set; }
-        public string? SessionId { get; private set; }
-        public string? Scnt { get; private set; }
+        public string? SessionToken { get; set; }
+        public string? SessionId { get; set; }
+        public string? Scnt { get; set; }
 
         public string? AuthType { get; private set; }
         public bool TfaRequired => AuthType == "hsa2";
@@ -74,6 +75,12 @@ namespace FindMyBatteries.ICloud
                 AuthType = responseContent!.AuthType;
             }
         }
+
+        public string SaveSession()
+            => JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+
+        public static ICloudAuth RestoreFromSession(string jsonSessionInfo)
+            => JsonSerializer.Deserialize<ICloudAuth>(jsonSessionInfo)!;
 
         public async Task AccountLoginAsync(string? trustToken = null)
         {

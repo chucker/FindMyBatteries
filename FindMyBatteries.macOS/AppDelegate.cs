@@ -28,13 +28,26 @@ namespace FindMyBatteries.macOS
 
         private async Task<FindMe.DTOs.FindMeResponse> GetFindMeDataAsync()
         {
-            var user = (await File.ReadAllTextAsync("user.txt")).Trim();
-            var pw = (await File.ReadAllTextAsync("pw.txt")).Trim();
+            ICloud.ICloudAuth? iCloudAuth;
+            var sessionInfo = Xamarin.Essentials.Preferences.Get("SessionInfo", "");
 
-            // based on https://github.com/MauriceConrad/iCloud-API
+            if (string.IsNullOrWhiteSpace(sessionInfo))
+            {
+                var user = (await File.ReadAllTextAsync("user.txt")).Trim();
+                var pw = (await File.ReadAllTextAsync("pw.txt")).Trim();
 
-            var iCloudAuth = new ICloud.ICloudAuth();
-            await iCloudAuth.InitSessionTokenAsync(user, pw);
+                // based on https://github.com/MauriceConrad/iCloud-API
+
+                iCloudAuth = new ICloud.ICloudAuth();
+                await iCloudAuth.InitSessionTokenAsync(user, pw);
+
+                Xamarin.Essentials.Preferences.Set("SessionInfo", iCloudAuth.SaveSession());
+            }
+            else
+            {
+                iCloudAuth = ICloud.ICloudAuth.RestoreFromSession(sessionInfo);
+            }
+
             await iCloudAuth.AccountLoginAsync();
 
             return await new FindMe.FindMe().InitClientAsync(iCloudAuth);
