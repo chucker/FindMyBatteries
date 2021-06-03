@@ -1,121 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D6F71AA7-AC92-489C-BCE0-6240B880DD22}</ProjectGuid>
-    <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>FindMyBatteries.macOS</RootNamespace>
-    <AssemblyName>Find My Batteries</AssemblyName>
-    <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
-    <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <EnableCodeSigning>false</EnableCodeSigning>
-    <CodeSigningKey>Mac Developer</CodeSigningKey>
-    <CreatePackage>false</CreatePackage>
-    <EnablePackageSigning>false</EnablePackageSigning>
-    <IncludeMonoRuntime>false</IncludeMonoRuntime>
-    <UseSGen>true</UseSGen>
-    <UseRefCounting>true</UseRefCounting>
-    <HttpClientHandler></HttpClientHandler>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <DefineConstants></DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <EnableCodeSigning>false</EnableCodeSigning>
-    <CreatePackage>true</CreatePackage>
-    <EnablePackageSigning>false</EnablePackageSigning>
-    <IncludeMonoRuntime>true</IncludeMonoRuntime>
-    <UseSGen>true</UseSGen>
-    <UseRefCounting>true</UseRefCounting>
-    <CodeSignEntitlements>Entitlements.plist</CodeSignEntitlements>
-    <LinkMode>SdkOnly</LinkMode>
-    <HttpClientHandler></HttpClientHandler>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Xamarin.Mac" />
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\netstandard2.1\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Buffers">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\netstandard2.0\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Encodings.Web">
-      <HintPath>..\packages\System.Text.Encodings.Web.5.0.1\lib\netstandard2.1\System.Text.Encodings.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Json">
-      <HintPath>..\packages\System.Text.Json.5.0.2\lib\netstandard2.0\System.Text.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Json">
-      <HintPath>..\packages\System.Net.Http.Json.5.0.0\lib\netstandard2.0\System.Net.Http.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Essentials">
-      <HintPath>..\packages\Xamarin.Essentials.1.6.1\lib\xamarinmac20\Xamarin.Essentials.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK" />
-    <Reference Include="System.Numerics.Vectors" />
-  </ItemGroup>
-  <ItemGroup>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32%402x.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512.png" />
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Contents.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Info.plist" />
-    <None Include="Entitlements.plist" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Main.cs" />
-    <Compile Include="AppDelegate.cs" />
-    <Compile Include="ViewController.cs" />
-    <Compile Include="ViewController.designer.cs">
-      <DependentUpon>ViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="IsExternalInit\IsExternalInit.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <InterfaceDefinition Include="Main.storyboard" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FindMyBatteries.Common\FindMyBatteries.Common.csproj">
-      <Project>{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}</Project>
-      <Name>FindMyBatteries.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
-  <Import Project="..\packages\IsExternalInit.1.0.0\build\netstandard2.0\IsExternalInit.targets" Condition="Exists('..\packages\IsExternalInit.1.0.0\build\netstandard2.0\IsExternalInit.targets')" />
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{D6F71AA7-AC92-489C-BCE0-6240B880DD22}</ProjectGuid>
+		<ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>FindMyBatteries.macOS</RootNamespace>
+		<AssemblyName>Find My Batteries</AssemblyName>
+		<Nullable>enable</Nullable>
+		<LangVersion>9.0</LangVersion>
+		<TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+		<TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
+		<MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>bin\Debug</OutputPath>
+		<DefineConstants>DEBUG;</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<EnableCodeSigning>false</EnableCodeSigning>
+		<CodeSigningKey>Mac Developer</CodeSigningKey>
+		<CreatePackage>false</CreatePackage>
+		<EnablePackageSigning>false</EnablePackageSigning>
+		<IncludeMonoRuntime>false</IncludeMonoRuntime>
+		<UseSGen>true</UseSGen>
+		<UseRefCounting>true</UseRefCounting>
+		<HttpClientHandler>
+		</HttpClientHandler>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>pdbonly</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>bin\Release</OutputPath>
+		<DefineConstants>
+		</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+		<EnableCodeSigning>false</EnableCodeSigning>
+		<CreatePackage>true</CreatePackage>
+		<EnablePackageSigning>false</EnablePackageSigning>
+		<IncludeMonoRuntime>true</IncludeMonoRuntime>
+		<UseSGen>true</UseSGen>
+		<UseRefCounting>true</UseRefCounting>
+		<CodeSignEntitlements>Entitlements.plist</CodeSignEntitlements>
+		<LinkMode>SdkOnly</LinkMode>
+		<HttpClientHandler>
+		</HttpClientHandler>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="IsExternalInit" Version="1.0.0" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
+		<PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+		<PackageReference Include="System.Text.Json" Version="5.0.2" />
+		<PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128%402x.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16%402x.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256%402x.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32%402x.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512.png" />
+		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512%402x.png" />
+		<ImageAsset Include="Assets.xcassets\Contents.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Resources\" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Info.plist" />
+		<None Include="Entitlements.plist" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="Main.cs" />
+		<Compile Include="AppDelegate.cs" />
+		<Compile Include="ViewController.cs" />
+		<Compile Include="ViewController.designer.cs">
+			<DependentUpon>ViewController.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<InterfaceDefinition Include="Main.storyboard" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\FindMyBatteries.Common\FindMyBatteries.Common.csproj">
+			<Project>{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}</Project>
+			<Name>FindMyBatteries.Common</Name>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="Xamarin.Mac" />
+	</ItemGroup>
+	<Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>
