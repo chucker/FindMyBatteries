@@ -2,12 +2,13 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using FindMyBatteries.FindMe.DTOs;
 
 namespace FindMyBatteries.FindMe
 {
     public class FindMe
     {
-        public async Task InitClientAsync(ICloud.ICloudAuth iCloudAuth)
+        public async Task<FindMeResponse> InitClientAsync(ICloud.ICloudAuth iCloudAuth)
         {
             var webServiceUrl = iCloudAuth.AccountInfo?.WebServices?["findme"].Url!;
 
@@ -48,7 +49,9 @@ namespace FindMyBatteries.FindMe
 
                 //var responseString = await response.Content.ReadAsStringAsync();
 
-                var responseDTO = await response.Content.ReadFromJsonAsync<DTOs.FindMeResponse>();
+                var responseDTO = await response.Content.ReadFromJsonAsync<DTOs.FindMeResponse>()!;
+
+                return responseDTO;
             }
         }
     }

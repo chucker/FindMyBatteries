@@ -5,4 +5,7 @@
     <PublishTrimmed>true</PublishTrimmed>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FindMyBatteries.Common\FindMyBatteries.Common.csproj" />
+  </ItemGroup>
 </Project>

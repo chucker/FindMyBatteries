@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindMyBatteries", "FindMyBa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindMyBatteries.macOS", "FindMyBatteries.macOS\FindMyBatteries.macOS.csproj", "{D6F71AA7-AC92-489C-BCE0-6240B880DD22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindMyBatteries.Common", "FindMyBatteries.Common\FindMyBatteries.Common.csproj", "{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|anycpu = Debug|anycpu
@@ -65,6 +67,22 @@ Global
 		{D6F71AA7-AC92-489C-BCE0-6240B880DD22}.Debug|iPhone.Build.0 = Debug|Any CPU
 		{D6F71AA7-AC92-489C-BCE0-6240B880DD22}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{D6F71AA7-AC92-489C-BCE0-6240B880DD22}.Release|iPhone.Build.0 = Release|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Debug|anycpu.ActiveCfg = Debug|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Debug|anycpu.Build.0 = Debug|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Release|anycpu.ActiveCfg = Release|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Release|anycpu.Build.0 = Release|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}.Release|iPhone.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
