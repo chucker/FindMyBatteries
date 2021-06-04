@@ -6,10 +6,14 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using Serilog;
+
 namespace FindMyBatteries.ICloud
 {
     public class ICloudAuth
     {
+        private readonly ILogger Log = Serilog.Log.ForContext<ICloudAuth>();
+
         private const string WidgetKey = "83545bf919730e51dbfba24e7e8a78d2";
         private const string Locale = "en_US";
 
@@ -74,6 +78,8 @@ namespace FindMyBatteries.ICloud
                     Scnt = scnt.First();
                 }
 
+                LogResponseHeaders("signin", response);
+
                 var responseContent = await response.Content.ReadFromJsonAsync<AuthTokenResponse>();
 
                 AuthType = responseContent!.AuthType;
@@ -106,6 +112,8 @@ namespace FindMyBatteries.ICloud
                     extended_login = true,
                     trustToken = trustToken
                 });
+
+                LogResponseHeaders("accountLogin", response);
 
                 LoginResultCookies = response.Headers.GetValues("Set-Cookie").ToList();
 
@@ -147,6 +155,8 @@ namespace FindMyBatteries.ICloud
 
                 var response = await httpClient.GetAsync(requestUri);
 
+                LogResponseHeaders("2sv/trust", response);
+
                 var responseContent = await response.Content.ReadAsStringAsync();
             }
         }
@@ -187,7 +197,19 @@ namespace FindMyBatteries.ICloud
                     }
                 });
 
+                LogResponseHeaders("securitycode", response);
+
                 var responseContent = await response.Content.ReadAsStringAsync();
+            }
+        }
+
+        private void LogResponseHeaders(string endpointName, HttpResponseMessage response)
+        {
+            Log.Debug("{endpointName} response headers: {@Headers}", endpointName, response.Headers);
+
+            if (response.Headers.TryGetValues("X-Apple-I-Ercd", out var errorCodes))
+            {
+                Log.Warning("{endpointName} error code: {@errorCode}", endpointName, errorCodes.First());
             }
         }
     }
