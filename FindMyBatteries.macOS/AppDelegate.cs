@@ -1,10 +1,15 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
-using AppKit;
-using FindMyBatteries.FindMe.DTOs;
-using Foundation;
 using System.Linq;
+using System.Threading.Tasks;
+
+using AppKit;
+
+using CoreGraphics;
+
+using FindMyBatteries.FindMe.DTOs;
+
+using Foundation;
 
 namespace FindMyBatteries.macOS
 {
