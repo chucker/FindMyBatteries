@@ -111,48 +111,8 @@ namespace FindMyBatteries.ICloud
             }
         }
 
-        //private async Task TrustDeviceAsync()
-        //{
-        //    var host = "idmsa.apple.com";
-        //    var referrer = $"https://{host}/appleauth/auth/signin?" +
-        //                   $"widgetKey={WidgetKey}&" +
-        //                   $"locale={Locale}&font=sf";
-
-        //    using (var httpClient = new HttpClient())
-        //    {
-        //        httpClient.DefaultRequestHeaders.Add("Referer", referrer);
-        //        httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
-        //        httpClient.DefaultRequestHeaders.Add("Host", host);
-        //        httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.1 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.1");
-        //        httpClient.DefaultRequestHeaders.Add("Origin", "https://www.icloud.com");
-        //        httpClient.DefaultRequestHeaders.Add("X-Apple-Widget-Key", WidgetKey);
-        //        httpClient.DefaultRequestHeaders.Add("X-Apple-I-FD-Client-Info", JsonSerializer.Serialize(new
-        //        {
-        //            U = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.1 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.1",
-        //            L = Locale,
-        //            Z = "GMT+02:00",
-        //            V = "1.1",
-        //            F = ""
-        //        }));
-        //        httpClient.DefaultRequestHeaders.Add("X-Apple-Session-Id", SessionId);
-        //        httpClient.DefaultRequestHeaders.Add("scnt", Scnt);
-
-        //        string requestUri = $"https://{host}/appleauth/auth/2sv/trust";
-
-        //        // POST fails with 403
-        //        // GET fails with 401
-        //        // maybe check https://github.com/fastlane/fastlane/blob/e874a47c6e2e0e61590a03d3b71e75e5a505d1ce/spaceship/lib/spaceship/two_step_or_factor_client.rb#L339?
-
-        //        var response = await httpClient.GetAsync(requestUri);
-
-        //        //var responseContent = await response.Content.ReadAsStringAsync();
-        //    }
-        //}
-
-        public async Task EnterSecurityCodeAsync(string? securityCode)
+        private async Task TrustDeviceAsync()
         {
-            //await TrustDeviceAsync();
-
             var host = "idmsa.apple.com";
             var referrer = $"https://{host}/appleauth/auth/signin?" +
                            $"widgetKey={WidgetKey}&" +
@@ -161,11 +121,10 @@ namespace FindMyBatteries.ICloud
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("Referer", referrer);
-                //httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+                httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
                 httpClient.DefaultRequestHeaders.Add("Host", host);
-                //httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.1 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.1");
-                httpClient.DefaultRequestHeaders.Add("Cookie", LoginResultCookies!);
-                //httpClient.DefaultRequestHeaders.Add("Origin", "https://www.icloud.com");
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.1 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.1");
+                httpClient.DefaultRequestHeaders.Add("Origin", "https://www.icloud.com");
                 httpClient.DefaultRequestHeaders.Add("X-Apple-Widget-Key", WidgetKey);
                 httpClient.DefaultRequestHeaders.Add("X-Apple-I-FD-Client-Info", JsonSerializer.Serialize(new
                 {
@@ -175,7 +134,45 @@ namespace FindMyBatteries.ICloud
                     V = "1.1",
                     F = ""
                 }));
-                httpClient.DefaultRequestHeaders.Add("X-Apple-Session-Id", SessionId);
+                httpClient.DefaultRequestHeaders.Add("X-Apple-ID-Session-Id", SessionId);
+                httpClient.DefaultRequestHeaders.Add("scnt", Scnt);
+
+                string requestUri = $"https://{host}/appleauth/auth/2sv/trust";
+
+                // POST fails with 403
+                // GET fails with 401
+                // maybe check https://github.com/fastlane/fastlane/blob/e874a47c6e2e0e61590a03d3b71e75e5a505d1ce/spaceship/lib/spaceship/two_step_or_factor_client.rb#L339?
+
+                var response = await httpClient.GetAsync(requestUri);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+            }
+        }
+
+        public async Task EnterSecurityCodeAsync(string? securityCode)
+        {
+            await TrustDeviceAsync();
+
+            var host = "idmsa.apple.com";
+            var referrer = $"https://{host}/appleauth/auth/signin?" +
+                           $"widgetKey={WidgetKey}&" +
+                           $"locale={Locale}&font=sf";
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("Referer", referrer);
+                httpClient.DefaultRequestHeaders.Add("Host", host);
+                httpClient.DefaultRequestHeaders.Add("Cookie", LoginResultCookies!);
+                httpClient.DefaultRequestHeaders.Add("X-Apple-Widget-Key", WidgetKey);
+                httpClient.DefaultRequestHeaders.Add("X-Apple-I-FD-Client-Info", JsonSerializer.Serialize(new
+                {
+                    U = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.1 (KHTML, like Gecko) Version/10.1.2 Safari/603.3.1",
+                    L = Locale,
+                    Z = "GMT+02:00",
+                    V = "1.1",
+                    F = ""
+                }));
+                httpClient.DefaultRequestHeaders.Add("X-Apple-ID-Session-Id", SessionId);
                 httpClient.DefaultRequestHeaders.Add("scnt", Scnt);
 
                 string requestUri = $"https://{host}/appleauth/auth/verify/trusteddevice/securitycode";
