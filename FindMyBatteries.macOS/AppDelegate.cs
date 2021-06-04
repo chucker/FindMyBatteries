@@ -92,14 +92,40 @@ namespace FindMyBatteries.macOS
                 iCloudAuth = new ICloud.ICloudAuth();
                 await iCloudAuth.InitSessionTokenAsync(user, pw);
 
+                await iCloudAuth.AccountLoginAsync();
+
+                if (iCloudAuth.TfaRequired)
+                {
+                    InvokeOnMainThread(async () =>
+                    {
+                        var alert = NSAlert.WithMessage("Please enter your iCloud two-factor security code",
+                                                        "Confirm", "Cancel", null, "");
+
+                        var input = new NSTextField(new CGRect(0, 0, 200, 24));
+                        alert.AccessoryView = input;
+
+                        var pressedButton = alert.RunModal();
+
+                        string securityCode = input.StringValue;
+
+                        switch ((NSModalResponse)(int)pressedButton)
+                        {
+                            case NSModalResponse.OK:
+                                await iCloudAuth.EnterSecurityCodeAsync(securityCode);
+
+                                break;
+                        }
+                    });
+                }
+
                 Xamarin.Essentials.Preferences.Set("SessionInfo", iCloudAuth.SaveSession());
             }
             else
             {
                 iCloudAuth = ICloud.ICloudAuth.RestoreFromSession(sessionInfo);
-            }
 
-            await iCloudAuth.AccountLoginAsync();
+                await iCloudAuth.AccountLoginAsync();
+            }
 
             return await new FindMe.FindMe().InitClientAsync(iCloudAuth);
         }
