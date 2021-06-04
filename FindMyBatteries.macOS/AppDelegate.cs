@@ -11,11 +11,15 @@ using FindMyBatteries.FindMe.DTOs;
 
 using Foundation;
 
+using Serilog;
+
 namespace FindMyBatteries.macOS
 {
     [Register("AppDelegate")]
     public class AppDelegate : NSApplicationDelegate
     {
+        private readonly ILogger Log = Serilog.Log.ForContext<AppDelegate>();
+
         private NSStatusItem? _StatusItem;
 
         public Device[]? Devices { get; private set; }
@@ -79,11 +83,15 @@ namespace FindMyBatteries.macOS
 
         private async Task<FindMeResponse> GetFindMeDataAsync()
         {
+            Log.Information("Fetching new data");
+
             ICloud.ICloudAuth? iCloudAuth;
             var sessionInfo = Xamarin.Essentials.Preferences.Get("SessionInfo", "");
 
             if (string.IsNullOrWhiteSpace(sessionInfo))
             {
+                Log.Information("Don't have session info yet");
+
                 var user = (await File.ReadAllTextAsync("user.txt")).Trim();
                 var pw = (await File.ReadAllTextAsync("pw.txt")).Trim();
 
