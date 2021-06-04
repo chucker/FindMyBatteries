@@ -13,6 +13,11 @@ namespace FindMyBatteries.ICloud
         private const string WidgetKey = "83545bf919730e51dbfba24e7e8a78d2";
         private const string Locale = "en_US";
 
+        public ICloudAuth()
+        {
+            ClientId = Guid.NewGuid();
+        }
+
         public string? SessionToken { get; set; }
         public string? SessionId { get; set; }
         public string? Scnt { get; set; }
@@ -20,7 +25,7 @@ namespace FindMyBatteries.ICloud
         public string? AuthType { get; private set; }
         public bool TfaRequired => AuthType == "hsa2";
 
-        public Guid ClientId { get; } = Guid.NewGuid();
+        public Guid ClientId { get; set; }
 
         public List<string>? LoginResultCookies { get; private set; }
         public LoginResult? AccountInfo { get; private set; }
@@ -138,9 +143,7 @@ namespace FindMyBatteries.ICloud
 
                 string requestUri = $"https://{host}/appleauth/auth/2sv/trust";
 
-                // POST fails with 403
-                // GET fails with 401
-                // maybe check https://github.com/fastlane/fastlane/blob/e874a47c6e2e0e61590a03d3b71e75e5a505d1ce/spaceship/lib/spaceship/two_step_or_factor_client.rb#L339?
+                // https://github.com/fastlane/fastlane/blob/e874a47c6e2e0e61590a03d3b71e75e5a505d1ce/spaceship/lib/spaceship/two_step_or_factor_client.rb#L339?
 
                 var response = await httpClient.GetAsync(requestUri);
 
@@ -175,10 +178,6 @@ namespace FindMyBatteries.ICloud
                 httpClient.DefaultRequestHeaders.Add("scnt", Scnt);
 
                 string requestUri = $"https://{host}/appleauth/auth/verify/trusteddevice/securitycode";
-
-                // POST fails with 403
-                // GET fails with 401
-                // maybe check https://github.com/fastlane/fastlane/blob/e874a47c6e2e0e61590a03d3b71e75e5a505d1ce/spaceship/lib/spaceship/two_step_or_factor_client.rb#L339?
 
                 var response = await httpClient.PostAsJsonAsync(requestUri, new
                 {
