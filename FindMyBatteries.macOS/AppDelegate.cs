@@ -7,6 +7,8 @@ using AppKit;
 
 using CoreGraphics;
 
+using FindMyBatteries.Common;
+using FindMyBatteries.Common.ICloud;
 using FindMyBatteries.FindMe.DTOs;
 
 using Foundation;
@@ -85,7 +87,7 @@ namespace FindMyBatteries.macOS
         {
             Log.Information("Fetching new data");
 
-            ICloud.ICloudAuth? iCloudAuth;
+            ICloudAuth? iCloudAuth;
             var sessionInfo = Xamarin.Essentials.Preferences.Get("SessionInfo", "");
 
             if (string.IsNullOrWhiteSpace(sessionInfo))
@@ -97,7 +99,7 @@ namespace FindMyBatteries.macOS
 
                 // based on https://github.com/MauriceConrad/iCloud-API
 
-                iCloudAuth = new ICloud.ICloudAuth();
+                iCloudAuth = new ICloudAuth();
                 await iCloudAuth.InitSessionTokenAsync(user, pw);
 
                 await iCloudAuth.AccountLoginAsync();
@@ -130,7 +132,7 @@ namespace FindMyBatteries.macOS
             }
             else
             {
-                iCloudAuth = ICloud.ICloudAuth.RestoreFromSession(sessionInfo);
+                iCloudAuth = ICloudAuth.RestoreFromSession(sessionInfo);
 
                 await iCloudAuth.AccountLoginAsync();
             }

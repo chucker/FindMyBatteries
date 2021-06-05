@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FindMyBatteries.ICloud
+namespace FindMyBatteries.Common.ICloud
 {
     public class LoginResult
     {

@@ -9,7 +9,7 @@ namespace FindMyBatteries.FindMe
 {
     public class FindMe
     {
-        public async Task<FindMeResponse> InitClientAsync(ICloud.ICloudAuth iCloudAuth)
+        public async Task<FindMeResponse> InitClientAsync(Common.ICloud.ICloudAuth iCloudAuth)
         {
             var webServiceUrl = iCloudAuth.AccountInfo?.WebServices?["findme"].Url!;
 
