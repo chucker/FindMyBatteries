@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using AppKit;
+
 using Foundation;
 
 namespace FindMyBatteries.macOS
@@ -19,6 +22,8 @@ namespace FindMyBatteries.macOS
 
         public override void DidFinishLaunching(NSNotification notification)
         {
+            //Console.OutputEncoding = Encoding.UTF8;
+            //
             //var rnd = new Random();
             //while (true)
             //{
@@ -28,10 +33,30 @@ namespace FindMyBatteries.macOS
 
             new System.Threading.Timer(async _ =>
             {
-                var findMeResponse = await GetFindMeDataAsync();
+                var findMeResponse = await GetFakeFindMeDataAsync();
+                //var findMeResponse = await GetFindMeDataAsync();
 
                 InvokeOnMainThread(() => CreateStatusBarItem(findMeResponse));
-            }, null, 0, Timeout.Infinite);
+            }, null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(3));
+        }
+
+        private async Task<FindMe.DTOs.FindMeResponse> GetFakeFindMeDataAsync()
+        {
+            var words = await File.ReadAllLinesAsync("/usr/share/dict/words");
+
+            var random = new Random();
+            var list = new List<FindMe.DTOs.Device>(5);
+            for (int i = 0; i < 5; i++)
+            {
+                list.Add(new FindMe.DTOs.Device
+                {
+                    Name = words[random.Next(0, words.Length - 1)],
+                    BatteryStatus = Enum.GetName(typeof(FindMe.DTOs.BatteryStatus), random.Next(0, 2)),
+                    BatteryLevel = random.Next(0, 1_000) / (double)1_000
+                });
+            }
+
+            return new FindMe.DTOs.FindMeResponse { Content = list.ToArray() };
         }
 
         private async Task<FindMe.DTOs.FindMeResponse> GetFindMeDataAsync()
