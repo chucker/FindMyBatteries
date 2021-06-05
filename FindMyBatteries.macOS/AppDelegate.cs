@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 using AppKit;
@@ -45,9 +46,9 @@ namespace FindMyBatteries.macOS
 
             new System.Threading.Timer(async _ =>
             {
-                // var findMeResponse = await GetFakeFindMeDataAsync();
                 // we could use ObservableCollection here, but there seems to be little real benefit
-                Devices = (await GetFindMeDataAsync()).Content;
+                Devices = (await GetFakeFindMeDataAsync()).Content;
+                //Devices = (await GetFindMeDataAsync()).Content;
 
                 InvokeOnMainThread(() => RefreshMenuItems());
             }, null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(3));
@@ -55,46 +56,23 @@ namespace FindMyBatteries.macOS
             CreateStatusBarItem();
         }
 
-
         private async Task<FindMe.DTOs.FindMeResponse> GetFakeFindMeDataAsync()
         {
             var words = await File.ReadAllLinesAsync("/usr/share/dict/words");
 
             var random = new Random();
-            var list = new List<FindMe.DTOs.Device>(5);
-            for (int i = 0; i < 5; i++)
+            var list = new List<FindMe.DTOs.Device>(11);
+            for (int i = 0; i < 11; i++)
             {
                 list.Add(new FindMe.DTOs.Device
                 {
                     Name = words[random.Next(0, words.Length - 1)],
                     BatteryStatus = Enum.GetName(typeof(FindMe.DTOs.BatteryStatus), random.Next(0, 2)),
-                    BatteryLevel = random.Next(0, 1_000) / (double)1_000
+                    BatteryLevel = i * 10 / (double)100 // random.Next(0, 1_000) / (double)1_000
                 });
             }
 
             return new FindMe.DTOs.FindMeResponse { Content = list.ToArray() };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
 
         private void RefreshMenuItems()
@@ -117,7 +95,7 @@ namespace FindMyBatteries.macOS
             }
 
             int j = 0;
-            foreach (var device in Devices.OrderBy(d => d.Name))
+            foreach (var device in Devices)//.OrderBy(d => d.Name))
             {
                 if (device.BatteryStatus == "Unknown")
                     continue;
