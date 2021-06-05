@@ -107,24 +107,73 @@ namespace FindMyBatteries.macOS
 
                 string suffix = device.BatteryStatus == "Charging" ? " (charging)" : "";
 
-                if (item.BatteryLevel != null)
+                if (device.BatteryLevel != null)
                 {
-                    string unicodeBlockPercentage = $"    { DrawPercentageAsUnicodeBlock(item.BatteryLevel.Value)}";
-                    menuItem = new NSMenuItem//(unicodeBlockPercentage)
+                    string unicodeBlockPercentage = $"    { DrawPercentageAsUnicodeBlock(device.BatteryLevel.Value)}";
+                    Console.OutputEncoding = Encoding.UTF8;
+                    Console.WriteLine(unicodeBlockPercentage);
+                    menuItem = new NSMenuItem
                     {
-                        AttributedTitle = new NSAttributedString(unicodeBlockPercentage, font: NSFont.FromFontName("SF Pro Display", 10))
+                        AttributedTitle = new NSAttributedString(unicodeBlockPercentage,
+                                                                 font: NSFont.FromFontName("Menlo", 10))
                     };
-                    _StatusItem.Menu.AddItem(menuItem);
+                    _StatusItem.Menu.InsertItem(menuItem, j);
+                    j++;
 
-                    menuItem = new NSMenuItem($"    {item.BatteryLevel:P0}{suffix}");
-                    _StatusItem.Menu.AddItem(menuItem);
+                    if (device.BatteryStatus == "Charging")
+                    {
+                        menuItem = new NSMenuItem
+                        {
+                            Image = NSImage.GetSystemSymbol("bolt.fill", accessibilityDescription: "charging"),
+                            Title = ""
+                        };
+                        _StatusItem.Menu.InsertItem(menuItem, j);
+                        j++;
+                    }
+
+                    menuItem = new NSMenuItem
+                    {
+                        Image = DrawBatteryImage(device.BatteryLevel),
+                        Title = ""
+                    };
+                    _StatusItem.Menu.InsertItem(menuItem, j);
+                    j++;
                 }
-
-                menuItem = new NSMenuItem($"    {device.BatteryLevel:P0}{suffix}");
-                _StatusItem.Menu.InsertItem(menuItem, j);
-
-                j++;
             }
+        }
+
+        /// <summary>
+        /// Takes the 100% battery image, but then draws a clip mask on top to
+        /// erase some of the battery if the level is below 100%.
+        /// </summary>
+        private NSImage DrawBatteryImage(double? batteryLevel)
+        {
+            var rect = new CGRect(0, 0, 22, 11);
+            var combinedImage = new NSImage(rect.Size);
+            var imageRep = new NSBitmapImageRep(IntPtr.Zero, (nint)rect.Width, (nint)rect.Height, 8, 4, true, true,
+                                                NSColorSpace.CalibratedRGB, NSBitmapFormat.AlphaFirst, 0, 0);
+
+            combinedImage.AddRepresentation(imageRep);
+            combinedImage.LockFocus();
+
+            var context = NSGraphicsContext.CurrentContext!.CGContext;
+            context.SaveState();
+
+            double x = 3 + (batteryLevel ?? 0) * 14;
+            double width = 14 - (batteryLevel ?? 0) * 14;
+            var path = NSBezierPath.FromRect(new CGRect(x, 3, width, 5));
+
+            var invertedPath = NSBezierPath.FromRect(rect);
+            invertedPath.AppendPath(path.BezierPathByReversingPath());
+            invertedPath.SetClip();
+
+            var sourceImage = NSImage.GetSystemSymbol("battery.100", accessibilityDescription: "charging")!;
+            sourceImage.Draw(rect);
+
+            combinedImage.UnlockFocus();
+            context.RestoreState();
+
+            return combinedImage;
         }
 
         private async Task<FindMeResponse> GetFindMeDataAsync()
