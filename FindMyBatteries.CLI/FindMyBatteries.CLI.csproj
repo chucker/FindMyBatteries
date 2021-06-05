@@ -8,4 +8,10 @@
   <ItemGroup>
     <ProjectReference Include="..\FindMyBatteries.Common\FindMyBatteries.Common.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Serilog" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using System;
+﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace FindMyBatteries
 {
@@ -17,12 +17,12 @@ namespace FindMyBatteries
             await iCloudAuth.InitSessionTokenAsync(user, pw);
             await iCloudAuth.AccountLoginAsync();
 
-//            if (iCloudAuth.TfaRequired)
-//            {
-//                Console.WriteLine("Enter two-factor code:");
-//var securityCode=                Console.ReadLine();
-//                await iCloudAuth.EnterSecurityCodeAsync(securityCode);
-//            }
+            if (iCloudAuth.TfaRequired)
+            {
+                Console.WriteLine("Enter two-factor code:");
+                var securityCode = Console.ReadLine();
+                await iCloudAuth.EnterSecurityCodeAsync(securityCode);
+            }
 
             await new FindMe.FindMe().InitClientAsync(iCloudAuth);
 

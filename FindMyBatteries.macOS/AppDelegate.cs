@@ -1,23 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 
 using AppKit;
 
+using CoreGraphics;
+
+using FindMyBatteries.Common;
+using FindMyBatteries.Common.ICloud;
+using FindMyBatteries.FindMe.DTOs;
+
 using Foundation;
+
+using Serilog;
 
 namespace FindMyBatteries.macOS
 {
     [Register("AppDelegate")]
     public class AppDelegate : NSApplicationDelegate
     {
+        private readonly ILogger Log = Serilog.Log.ForContext<AppDelegate>();
+
         private NSStatusItem? _StatusItem;
+
+        public Device[]? Devices { get; private set; }
 
         public AppDelegate()
         {
+
         }
 
         public override void DidFinishLaunching(NSNotification notification)
@@ -33,12 +45,16 @@ namespace FindMyBatteries.macOS
 
             new System.Threading.Timer(async _ =>
             {
-                var findMeResponse = await GetFakeFindMeDataAsync();
-                //var findMeResponse = await GetFindMeDataAsync();
+                // var findMeResponse = await GetFakeFindMeDataAsync();
+                // we could use ObservableCollection here, but there seems to be little real benefit
+                Devices = (await GetFindMeDataAsync()).Content;
 
-                InvokeOnMainThread(() => CreateStatusBarItem(findMeResponse));
+                InvokeOnMainThread(() => RefreshMenuItems());
             }, null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(3));
+
+            CreateStatusBarItem();
         }
+
 
         private async Task<FindMe.DTOs.FindMeResponse> GetFakeFindMeDataAsync()
         {
@@ -57,31 +73,135 @@ namespace FindMyBatteries.macOS
             }
 
             return new FindMe.DTOs.FindMeResponse { Content = list.ToArray() };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
 
-        private async Task<FindMe.DTOs.FindMeResponse> GetFindMeDataAsync()
+        private void RefreshMenuItems()
         {
-            ICloud.ICloudAuth? iCloudAuth;
+            if (Devices == null)
+            {
+                // TODO log.warn
+                return;
+            }
+
+            if (_StatusItem?.Menu == null)
+                return;
+
+            NSMenuItem firstSeparator = _StatusItem.Menu.Items.FirstOrDefault(i => i.IsSeparatorItem);
+
+            // the more obvious IndexOfItem() always returns -1, for some reason
+            while (_StatusItem.Menu.ItemAt(0) != firstSeparator)
+            {
+                _StatusItem.Menu.RemoveItemAt(0);
+            }
+
+            int j = 0;
+            foreach (var device in Devices.OrderBy(d => d.Name))
+            {
+                if (device.BatteryStatus == "Unknown")
+                    continue;
+
+                var menuItem = new NSMenuItem(device.Name);
+                _StatusItem.Menu.InsertItem(menuItem, j);
+
+                j++;
+
+                string suffix = device.BatteryStatus == "Charging" ? " (charging)" : "";
+
+                if (item.BatteryLevel != null)
+                {
+                    string unicodeBlockPercentage = $"    { DrawPercentageAsUnicodeBlock(item.BatteryLevel.Value)}";
+                    menuItem = new NSMenuItem//(unicodeBlockPercentage)
+                    {
+                        AttributedTitle = new NSAttributedString(unicodeBlockPercentage, font: NSFont.FromFontName("SF Pro Display", 10))
+                    };
+                    _StatusItem.Menu.AddItem(menuItem);
+
+                    menuItem = new NSMenuItem($"    {item.BatteryLevel:P0}{suffix}");
+                    _StatusItem.Menu.AddItem(menuItem);
+                }
+
+                menuItem = new NSMenuItem($"    {device.BatteryLevel:P0}{suffix}");
+                _StatusItem.Menu.InsertItem(menuItem, j);
+
+                j++;
+            }
+        }
+
+        private async Task<FindMeResponse> GetFindMeDataAsync()
+        {
+            Log.Information("Fetching new data");
+
+            ICloudAuth? iCloudAuth;
             var sessionInfo = Xamarin.Essentials.Preferences.Get("SessionInfo", "");
 
             if (string.IsNullOrWhiteSpace(sessionInfo))
             {
+                Log.Information("Don't have session info yet");
+
                 var user = (await File.ReadAllTextAsync("user.txt")).Trim();
                 var pw = (await File.ReadAllTextAsync("pw.txt")).Trim();
 
                 // based on https://github.com/MauriceConrad/iCloud-API
 
-                iCloudAuth = new ICloud.ICloudAuth();
+                iCloudAuth = new ICloudAuth();
                 await iCloudAuth.InitSessionTokenAsync(user, pw);
+
+                await iCloudAuth.AccountLoginAsync();
+
+                if (iCloudAuth.TfaRequired)
+                {
+                    InvokeOnMainThread(async () =>
+                    {
+                        var alert = NSAlert.WithMessage("Please enter your iCloud two-factor security code",
+                                                        "Confirm", "Cancel", null, "");
+
+                        var input = new NSTextField(new CGRect(0, 0, 200, 24));
+                        alert.AccessoryView = input;
+
+                        var pressedButton = alert.RunModal();
+
+                        string securityCode = input.StringValue;
+
+                        switch ((NSModalResponse)(int)pressedButton)
+                        {
+                            case NSModalResponse.OK:
+                                await iCloudAuth.EnterSecurityCodeAsync(securityCode);
+
+                                break;
+                        }
+                    });
+                }
 
                 Xamarin.Essentials.Preferences.Set("SessionInfo", iCloudAuth.SaveSession());
             }
             else
             {
-                iCloudAuth = ICloud.ICloudAuth.RestoreFromSession(sessionInfo);
-            }
+                iCloudAuth = ICloudAuth.RestoreFromSession(sessionInfo);
 
-            await iCloudAuth.AccountLoginAsync();
+                await iCloudAuth.AccountLoginAsync();
+            }
 
             return await new FindMe.FindMe().InitClientAsync(iCloudAuth);
         }
@@ -110,65 +230,20 @@ namespace FindMyBatteries.macOS
             return sb.ToString();
         }
 
-        private void CreateStatusBarItem(FindMe.DTOs.FindMeResponse findMeResponse)
+        private void CreateStatusBarItem()
         {
             NSStatusBar statusBar = NSStatusBar.SystemStatusBar;
 
             this._StatusItem = statusBar.CreateStatusItem(NSStatusItemLength.Variable);
             _StatusItem.Title = "Test";
-            //_StatusItem.Image = EFontAwesomeIcon.Solid_Music.GetNSImage();
             _StatusItem.Menu = new NSMenu();
-
-            //_StatusItem.Button.AddGestureRecognizer(new NSPressGestureRecognizer(CenterSearchWindow)
-            //{
-            //    MinimumPressDuration = 1
-            //});
 
             string title;
             NSMenuItem menuItem;
 
-            foreach (var item in findMeResponse.Content!)
-            {
-                if (item.BatteryStatus == "Unknown")
-                    continue;
-
-                menuItem = new NSMenuItem(item.Name);
-                _StatusItem.Menu.AddItem(menuItem);
-
-                string suffix = item.BatteryStatus == "Charging" ? " (charging)" : "";
-
-                if (item.BatteryLevel != null)
-                {
-                    string unicodeBlockPercentage = $"    { DrawPercentageAsUnicodeBlock(item.BatteryLevel.Value)}";
-                    menuItem = new NSMenuItem//(unicodeBlockPercentage)
-                    {
-                        AttributedTitle = new NSAttributedString(unicodeBlockPercentage, font: NSFont.FromFontName("SF Pro Display", 10))
-                    };
-                    _StatusItem.Menu.AddItem(menuItem);
-
-                    menuItem = new NSMenuItem($"    {item.BatteryLevel:P0}{suffix}");
-                    _StatusItem.Menu.AddItem(menuItem);
-                }
-            }
-
-            //            if (iCloudAuth.TfaRequired)
-            //            {
-            //                Console.WriteLine("Enter two-factor code:");
-            //var securityCode=                Console.ReadLine();
-            //                await iCloudAuth.EnterSecurityCodeAsync(securityCode);
-            //            }
-
-
-            title = "Preferences…";
-            //menuItem = new NSMenuItem(title, ",", (sender, e) =>
-            //{
-            //    DependencyService.Get<Services.Windows.PreferencesWindowService>().OpenWindow();
-            //});
-            //_StatusItem.Menu.AddItem(menuItem);
-
             _StatusItem.Menu.AddItem(NSMenuItem.SeparatorItem);
 
-            //title = $"Quit {AppName}";
+            title = $"Quit Find My Batteries";
             menuItem = new NSMenuItem(title, "q", (sender, e) =>
             {
                 NSApplication.SharedApplication.Terminate(sender as NSObject);
