@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading.Tasks;
 
+using FindMyBatteries.Common.ICloud;
+
 namespace FindMyBatteries
 {
     class MainClass
@@ -13,7 +15,7 @@ namespace FindMyBatteries
 
             // based on https://github.com/MauriceConrad/iCloud-API
 
-            var iCloudAuth = new ICloud.ICloudAuth();
+            var iCloudAuth = new ICloudAuth();
             await iCloudAuth.InitSessionTokenAsync(user, pw);
             await iCloudAuth.AccountLoginAsync();
 
