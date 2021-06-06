@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using AppKit;
 
 using CoreGraphics;
 
-using FindMyBatteries.Common;
 using FindMyBatteries.Common.ICloud;
 using FindMyBatteries.FindMe.DTOs;
 
@@ -35,15 +33,6 @@ namespace FindMyBatteries.macOS
 
         public override void DidFinishLaunching(NSNotification notification)
         {
-            //Console.OutputEncoding = Encoding.UTF8;
-            //
-            //var rnd = new Random();
-            //while (true)
-            //{
-            //    var nextDouble = rnd.Next(0, 1_000) / (double)1_000;
-            //    Console.WriteLine(DrawPercentageAsUnicodeBlock(nextDouble));
-            //}
-
             new System.Threading.Timer(async _ =>
             {
                 // we could use ObservableCollection here, but there seems to be little real benefit
@@ -86,7 +75,7 @@ namespace FindMyBatteries.macOS
             if (_StatusItem?.Menu == null)
                 return;
 
-            NSMenuItem firstSeparator = _StatusItem.Menu.Items.FirstOrDefault(i => i.IsSeparatorItem);
+            NSMenuItem firstSeparator = _StatusItem.Menu.Items.FirstOrDefault(mi => mi.IsSeparatorItem);
 
             // the more obvious IndexOfItem() always returns -1, for some reason
             while (_StatusItem.Menu.ItemAt(0) != firstSeparator)
@@ -94,50 +83,22 @@ namespace FindMyBatteries.macOS
                 _StatusItem.Menu.RemoveItemAt(0);
             }
 
-            int j = 0;
+            int i = 0;
             foreach (var device in Devices)//.OrderBy(d => d.Name))
             {
                 if (device.BatteryStatus == "Unknown")
                     continue;
 
-                var menuItem = new NSMenuItem(device.Name);
-                _StatusItem.Menu.InsertItem(menuItem, j);
-
-                j++;
-
-                string suffix = device.BatteryStatus == "Charging" ? " (charging)" : "";
-
                 if (device.BatteryLevel != null)
                 {
-                    string unicodeBlockPercentage = $"    { DrawPercentageAsUnicodeBlock(device.BatteryLevel.Value)}";
-                    Console.OutputEncoding = Encoding.UTF8;
-                    Console.WriteLine(unicodeBlockPercentage);
-                    menuItem = new NSMenuItem
+                    MenuItemView menuItemView = new MenuItemView(new CGRect(0, 0, 200, 20), device,
+                                                                 level => DrawBatteryImage(level));
+                    NSMenuItem menuItem = new()
                     {
-                        AttributedTitle = new NSAttributedString(unicodeBlockPercentage,
-                                                                 font: NSFont.FromFontName("Menlo", 10))
+                        View = menuItemView
                     };
-                    _StatusItem.Menu.InsertItem(menuItem, j);
-                    j++;
-
-                    if (device.BatteryStatus == "Charging")
-                    {
-                        menuItem = new NSMenuItem
-                        {
-                            Image = NSImage.GetSystemSymbol("bolt.fill", accessibilityDescription: "charging"),
-                            Title = ""
-                        };
-                        _StatusItem.Menu.InsertItem(menuItem, j);
-                        j++;
-                    }
-
-                    menuItem = new NSMenuItem
-                    {
-                        Image = DrawBatteryImage(device.BatteryLevel),
-                        Title = ""
-                    };
-                    _StatusItem.Menu.InsertItem(menuItem, j);
-                    j++;
+                    _StatusItem.Menu.InsertItem(menuItem, i);
+                    i++;
                 }
             }
         }
@@ -236,25 +197,6 @@ namespace FindMyBatteries.macOS
         public override void WillTerminate(NSNotification notification)
         {
             // Insert code here to tear down your application
-        }
-
-        public static string DrawPercentageAsUnicodeBlock(double percentageAsDecimal)
-        {
-            var sb = new StringBuilder(25);
-
-            int[] chars = new[] { 0x258F, 0x258E, 0x258D, 0x258C, 0x258B, 0x258A, 0x2589, 0x2588 };
-
-            int remaining = (int)Math.Ceiling(percentageAsDecimal * 100);
-            int current;
-            while (remaining > 0)
-            {
-                current = remaining > 8 ? 8 : remaining;
-                remaining -= 8;
-
-                sb.Append(char.ConvertFromUtf32(chars[current - 1]));
-            }
-
-            return sb.ToString();
         }
 
         private void CreateStatusBarItem()
