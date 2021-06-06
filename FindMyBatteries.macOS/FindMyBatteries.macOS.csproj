@@ -31,6 +31,9 @@
 		<UseRefCounting>true</UseRefCounting>
 		<HttpClientHandler>
 		</HttpClientHandler>
+		<LinkMode>Full</LinkMode>
+		<AOTMode>None</AOTMode>
+		<XamMacArch>x86_64</XamMacArch>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>pdbonly</DebugType>
@@ -50,6 +53,7 @@
 		<LinkMode>SdkOnly</LinkMode>
 		<HttpClientHandler>
 		</HttpClientHandler>
+		<AOTMode>None</AOTMode>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="IsExternalInit" Version="1.0.0" PrivateAssets="all" />
