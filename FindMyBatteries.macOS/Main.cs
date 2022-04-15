@@ -15,7 +15,8 @@ namespace FindMyBatteries.macOS
 #if DEBUG
                .MinimumLevel.Debug()
 #endif
-               .WriteTo.AppleUnifiedLogging()
+               //.WriteTo.AppleUnifiedLogging()
+               .WriteTo.Console()
                .CreateLogger();
 
             NSApplication.Main(args);

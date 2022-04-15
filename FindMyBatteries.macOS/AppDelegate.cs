@@ -142,7 +142,15 @@ namespace FindMyBatteries.macOS
             Log.Information("Fetching new data");
 
             ICloudAuth? iCloudAuth;
-            var sessionInfo = Xamarin.Essentials.Preferences.Get("SessionInfo", "");
+
+            string sessionInfo;
+            try
+            {
+                sessionInfo = await File.ReadAllTextAsync("sessionInfo.json");
+            }
+            catch { sessionInfo = ""; }
+
+            //var sessionInfo = Microsoft.Maui.Essentials.Preferences.Get("SessionInfo", "");
 
             if (string.IsNullOrWhiteSpace(sessionInfo))
             {
@@ -182,7 +190,9 @@ namespace FindMyBatteries.macOS
                     });
                 }
 
-                Xamarin.Essentials.Preferences.Set("SessionInfo", iCloudAuth.SaveSession());
+                await File.WriteAllTextAsync("sessionInfo.json", iCloudAuth.SaveSession());
+
+                //Xamarin.Essentials.Preferences.Set("SessionInfo", iCloudAuth.SaveSession());
             }
             else
             {

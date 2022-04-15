@@ -1,123 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<ProjectGuid>{D6F71AA7-AC92-489C-BCE0-6240B880DD22}</ProjectGuid>
-		<ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-		<OutputType>Exe</OutputType>
-		<RootNamespace>FindMyBatteries.macOS</RootNamespace>
-		<AssemblyName>Find My Batteries</AssemblyName>
-		<Nullable>enable</Nullable>
-		<LangVersion>9.0</LangVersion>
-		<TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-		<TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
-		<MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>full</DebugType>
-		<Optimize>false</Optimize>
-		<OutputPath>bin\Debug</OutputPath>
-		<DefineConstants>DEBUG;</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<EnableCodeSigning>false</EnableCodeSigning>
-		<CodeSigningKey>Mac Developer</CodeSigningKey>
-		<CreatePackage>false</CreatePackage>
-		<EnablePackageSigning>false</EnablePackageSigning>
-		<IncludeMonoRuntime>false</IncludeMonoRuntime>
-		<UseSGen>true</UseSGen>
-		<UseRefCounting>true</UseRefCounting>
-		<HttpClientHandler>
-		</HttpClientHandler>
-		<LinkMode>Full</LinkMode>
-		<AOTMode>None</AOTMode>
-		<XamMacArch>x86_64</XamMacArch>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<DebugType>pdbonly</DebugType>
-		<Optimize>true</Optimize>
-		<OutputPath>bin\Release</OutputPath>
-		<DefineConstants>
-		</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<EnableCodeSigning>false</EnableCodeSigning>
-		<CreatePackage>true</CreatePackage>
-		<EnablePackageSigning>false</EnablePackageSigning>
-		<IncludeMonoRuntime>true</IncludeMonoRuntime>
-		<UseSGen>true</UseSGen>
-		<UseRefCounting>true</UseRefCounting>
-		<CodeSignEntitlements>Entitlements.plist</CodeSignEntitlements>
-		<LinkMode>SdkOnly</LinkMode>
-		<HttpClientHandler>
-		</HttpClientHandler>
-		<AOTMode>None</AOTMode>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="IsExternalInit" Version="1.0.0" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
-		<PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-		<PackageReference Include="System.Text.Json" Version="5.0.2" />
-		<PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
-		<PackageReference Include="Serilog">
-		  <Version>2.10.0</Version>
-		</PackageReference>
-	</ItemGroup>
-	<ItemGroup>
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128%402x.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16%402x.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256%402x.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32%402x.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512.png" />
-		<ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512%402x.png" />
-		<ImageAsset Include="Assets.xcassets\Contents.json" />
-	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Resources\" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="Info.plist" />
-		<None Include="Entitlements.plist" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="Main.cs" />
-		<Compile Include="AppDelegate.cs" />
-		<Compile Include="ViewController.cs" />
-		<Compile Include="ViewController.designer.cs">
-			<DependentUpon>ViewController.cs</DependentUpon>
-		</Compile>
-		<Compile Include="MenuItemView.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<InterfaceDefinition Include="Main.storyboard" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\FindMyBatteries.Common\FindMyBatteries.Common.csproj">
-			<Project>{6FB6AC44-5CCA-4B46-9B9F-73ED9787DEA8}</Project>
-			<Name>FindMyBatteries.Common</Name>
-		</ProjectReference>
-	</ItemGroup>
-	<ItemGroup>
-	  <Reference Include="Xamarin.Mac" />
-	  <Reference Include="System.Core" />
-	  <Reference Include="System" />
-	  <Reference Include="System.ComponentModel.DataAnnotations" />
-	  <Reference Include="Serilog.Sinks.AppleUnifiedLogging">
-	    <HintPath>Serilog.Sinks.AppleUnifiedLogging\Serilog.Sinks.AppleUnifiedLogging.dll</HintPath>
-	  </Reference>
-	</ItemGroup>
-	<ItemGroup>
-	  <NativeReference Include="Serilog.Sinks.AppleUnifiedLogging\libAppleUnifiedLoggingSink.Native.dylib">
-	    <Kind>Dynamic</Kind>
-	    <SmartLink>False</SmartLink>
-	  </NativeReference>
-	</ItemGroup>
-	<Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-macos</TargetFramework>
+    <Nullable>enable</Nullable>
+    <SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
+	<UsingMauiEssentials>true</UsingMauiEssentials>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <UseSGen>false</UseSGen>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <UseSGen>false</UseSGen>
+  </PropertyGroup>
+  <ItemGroup>
+	<PackageReference Include="Serilog" Version="2.10.0" />
+	<PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\FindMyBatteries.Common\FindMyBatteries.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Reference Include="Serilog.Sinks.AppleUnifiedLogging">
+	  <HintPath>Serilog.Sinks.AppleUnifiedLogging\Serilog.Sinks.AppleUnifiedLogging.dll</HintPath>
+	</Reference>
+	<NativeReference Include="Serilog.Sinks.AppleUnifiedLogging\libAppleUnifiedLoggingSink.Native.dylib">
+	  <Kind>Dynamic</Kind>
+	  <SmartLink>False</SmartLink>
+	</NativeReference>
+  </ItemGroup>
 </Project>
